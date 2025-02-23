@@ -1,4 +1,5 @@
-import { getImage } from './js/pixabay-api';
+import { getImage, resetPage, addPage } from './js/pixabay-api';
+import { addLoadStroke, removeLoadStroke } from './js/render-functions';
 import errorIcon from './img/error.svg';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
@@ -14,30 +15,57 @@ export const iziOption = {
   closeOnClick: true,
 };
 
-document.querySelector('.form').addEventListener('submit', event => {
-  const input = document.querySelector('.user-input').value.trim();
-  const box = document.querySelector('.gallery');
-  event.preventDefault();
+const box = document.querySelector('.gallery');
+const load = document.querySelector('.load');
+const addMoreButton = document.querySelector('.add-more-button');
+const form = document.querySelector('.form');
+const input = document.querySelector('.user-input');
 
-  if (!input) {
-    iziToast.show({
-      ...iziOption,
-      message: 'Please enter the search query',
-    });
-    return;
-  }
+if (!box) console.error('Gallery element not found');
+if (!load) console.error('Load element not found');
+if (!addMoreButton) console.error('Load more button not found');
+if (!form) console.error('Form element not found');
+if (!input) console.error('Input element not found');
 
-  box.innerHTML =
-    '<p>Wait, the image is loaded</p><span class="loader"></span>';
+let searchQuery = '';
 
-getImage(input)
-  .then(() => {
-    document.querySelector('.user-input').value = '';
-    document.querySelector('.user-input').focus();
-  })
-  .catch(error => {
-    console.error(error);
-    document.querySelector('.user-input').value = '';
-    document.querySelector('.user-input').focus();
+if (!form) {
+  console.error('Form element not found');
+} else {
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    console.log('Form submitted'); // Додано для перевірки
+    searchQuery = input.value.trim();
+    if (!searchQuery) {
+      iziToast.show({
+        ...iziOption,
+        message: 'Please enter the search query',
+      });
+      return;
+    }
+    box.innerHTML = '';
+    resetPage();
+    addLoadStroke(load);
+    addMoreButton.classList.add('hide');
+    getImage(searchQuery)
+      .then(() => {
+        input.value = ''; // Очищаємо поле вводу
+        input.focus(); // Фокусуємося на полі вводу
+      })
+      .catch(error => {
+        console.error(error);
+        input.value = ''; // Очищаємо поле вводу в разі помилки
+        input.focus(); // Фокусуємося на полі вводу
+      });
   });
-});
+}
+
+if (!addMoreButton) {
+  console.error('Load more button not found');
+} else {
+  addMoreButton.addEventListener('click', event => {
+    addPage();
+    addLoadStroke(load);
+    getImage(searchQuery);
+  });
+}
