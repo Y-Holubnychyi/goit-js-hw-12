@@ -33,31 +33,32 @@ if (!form) {
   console.error('Form element not found');
 } else {
   form.addEventListener('submit', event => {
-    event.preventDefault();
-    console.log('Form submitted'); // Додано для перевірки
-    searchQuery = input.value.trim();
-    if (!searchQuery) {
-      iziToast.show({
-        ...iziOption,
-        message: 'Please enter the search query',
-      });
-      return;
-    }
-    box.innerHTML = '';
-    resetPage();
-    addLoadStroke(load);
-    addMoreButton.classList.add('hide');
-    getImage(searchQuery)
-      .then(() => {
-        input.value = ''; // Очищаємо поле вводу
-        input.focus(); // Фокусуємося на полі вводу
-      })
-      .catch(error => {
-        console.error(error);
-        input.value = ''; // Очищаємо поле вводу в разі помилки
-        input.focus(); // Фокусуємося на полі вводу
-      });
-  });
+  event.preventDefault();
+  console.log('Form submitted'); // Додано для перевірки
+  searchQuery = input.value.trim();
+  if (!searchQuery) {
+    iziToast.show({
+      ...iziOption,
+      message: 'Please enter the search query',
+    });
+    return;
+  }
+  box.innerHTML = ''; // Очищаємо галерею
+  resetPage(); // Скидаємо сторінку до 1
+  addLoadStroke(load); // Показуємо текст "Wait, the image is loaded"
+  addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
+  getImage(searchQuery)
+    .then(() => {
+      console.log('Images loaded successfully'); // Додано для перевірки
+      input.value = ''; // Очищаємо поле вводу
+      input.focus(); // Фокусуємося на полі вводу
+    })
+    .catch(error => {
+      console.error('Error loading images:', error); // Додано для перевірки
+      input.value = ''; // Очищаємо поле вводу в разі помилки
+      input.focus(); // Фокусуємося на полі вводу
+    });
+});
 }
 
 if (!addMoreButton) {

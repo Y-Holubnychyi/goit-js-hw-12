@@ -9,6 +9,10 @@ const box = document.querySelector('.gallery');
 const load = document.querySelector('.load');
 const addMoreButton = document.querySelector('.add-more-button');
 
+if (!box || !load || !addMoreButton) {
+  console.error('One or more elements not found');
+}
+
 let page = 1;
 let perPage = 40;
 
@@ -22,8 +26,10 @@ export function addPage() {
 
 function endOfList(daddyElement, message = "We're sorry, but you've reached the end of search results.") {
   removeLoadStroke(daddyElement);
-  daddyElement.insertAdjacentHTML('beforeend', `<p class="loading-text">${message}</p>`);
-  addMoreButton.classList.add('hide');
+  if (!daddyElement.querySelector('.loading-text')) {
+    daddyElement.insertAdjacentHTML('beforeend', `<p class="loading-text">${message}</p>`);
+  }
+  addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
 }
 
 export async function getImage(input) {
@@ -41,17 +47,22 @@ export async function getImage(input) {
   const URL = `https://pixabay.com/api/?${urlParams}`;
 
   try {
+    console.log('Fetching images from Pixabay...'); // Додано для перевірки
     const { data } = await axios.get(URL);
-console.log('Data received:', data); // Додано для перевірки
+    console.log('Data received from Pixabay:', data); // Додано для перевірки
+
     if (data.hits.length === 0) {
+      console.log('No images found for the query:', input); // Додано для перевірки
       endOfList(load, "Sorry, there are no images matching your search query. Please try again!");
-      removeLoadStroke(load);
+      removeLoadStroke(load); // Приховуємо текст "Wait, the image is loaded"
       return;
     }
 
-    markup(data);
+    console.log('Images found:', data.hits.length); // Додано для перевірки
+    markup(data); // Викликаємо markup, який містить removeLoadStroke
 
     if (data.totalHits < page * perPage) {
+      console.log('End of search results reached'); // Додано для перевірки
       endOfList(load);
       return;
     }
@@ -67,9 +78,10 @@ console.log('Data received:', data); // Додано для перевірки
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching images from Pixabay:', error); // Додано для перевірки
     box.innerHTML = '';
     load.innerHTML = '';
+    removeLoadStroke(load); // Приховуємо текст "Wait, the image is loaded" у разі помилки
     iziToast.show({
       ...iziOption,
       message: `Sorry, an error happened. Try again. Error: ${error.message}`,

@@ -24,6 +24,8 @@ export function addLoadStroke(daddyElement) {
     return;
   }
 
+  console.log('Adding load stroke...'); // Додано для перевірки
+
   // Додаємо надпис та індикатор завантаження
   daddyElement.insertAdjacentHTML(
     'beforeend',
@@ -37,6 +39,8 @@ export function removeLoadStroke(daddyElement) {
     console.error('Parent element not found');
     return;
   }
+
+  console.log('Removing load stroke...'); // Додано для перевірки
 
   // Видаляємо надпис та індикатор завантаження
   const textElement = daddyElement.querySelector('.loading-text');
@@ -54,9 +58,12 @@ export function markup(data) {
     return;
   }
 
+  console.log('Rendering images...'); // Додано для перевірки
+
   const { hits } = data;
 
   if (hits.length === 0) {
+    console.log('No hits found in data'); // Додано для перевірки
     iziToast.show({
       ...iziOption,
       message: 'Sorry, there are no images matching your search query. Please, try again!',
@@ -88,8 +95,10 @@ export function markup(data) {
     .join(' ');
 
   box.insertAdjacentHTML('beforeend', markup); // Додаємо зображення до галереї
+  console.log('Images rendered successfully'); // Додано для перевірки
   removeLoadStroke(load); // Приховуємо надпис після додавання зображень
 
+  // Ініціалізація SimpleLightbox
   const galleryLinks = document.querySelectorAll('.gallery a');
   if (galleryLinks.length > 0) {
     const lightbox = new SimpleLightbox('.gallery a', {
