@@ -3,7 +3,7 @@ import { removeLoadStroke } from './render-functions';
 import axios from 'axios';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
-import { iziOption } from '../main'; // Імпорт iziOption з main.js
+import { iziOption } from '../main';
 
 const box = document.querySelector('.gallery');
 const load = document.querySelector('.load');
@@ -18,6 +18,7 @@ let perPage = 40;
 
 export function resetPage() {
   page = 1;
+  console.log('Page reset to 1'); // Додано для перевірки
 }
 
 export function addPage() {
@@ -31,9 +32,7 @@ function endOfList(daddyElement, message = "We're sorry, but you've reached the 
   }
   if (addMoreButton) {
     addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
-    console.log('Load more button hidden'); // Додано для перевірки
-  } else {
-    console.error('Load more button not found'); // Додано для перевірки
+    
   }
 }
 
@@ -52,23 +51,18 @@ export async function getImage(input) {
   const URL = `https://pixabay.com/api/?${urlParams}`;
 
   try {
-    console.log('Fetching images from Pixabay...'); // Додано для перевірки
     const { data } = await axios.get(URL);
-    console.log('Data received from Pixabay:', data); // Додано для перевірки
 
     if (data.hits.length === 0) {
-      console.log('No images found for the query:', input); // Додано для перевірки
       endOfList(load, "Sorry, there are no images matching your search query. Please try again!");
-      return; // Виходимо з функції
+      return; 
     }
 
-    console.log('Images found:', data.hits.length); // Додано для перевірки
     markup(data); // Викликаємо markup, який містить removeLoadStroke
 
     if (data.totalHits < page * perPage) {
-      console.log('End of search results reached'); // Додано для перевірки
       endOfList(load);
-      return; // Виходимо з функції
+      return;
     }
 
     if (page >= 2) {
@@ -82,7 +76,6 @@ export async function getImage(input) {
       }
     }
   } catch (error) {
-    console.error('Error fetching images from Pixabay:', error); // Додано для перевірки
     box.innerHTML = '';
     load.innerHTML = '';
     removeLoadStroke(load); // Приховуємо текст "Wait, the image is loaded" у разі помилки
@@ -90,6 +83,6 @@ export async function getImage(input) {
       ...iziOption,
       message: `Sorry, an error happened. Try again. Error: ${error.message}`,
     });
-    return; // Виходимо з функції
+    return;
   }
 }

@@ -24,8 +24,6 @@ export function addLoadStroke(daddyElement) {
     return;
   }
 
-  console.log('Adding load stroke...'); // Додано для перевірки
-
   // Додаємо надпис та індикатор завантаження
   daddyElement.insertAdjacentHTML(
     'beforeend',
@@ -40,8 +38,6 @@ export function removeLoadStroke(daddyElement) {
     return;
   }
 
-  console.log('Removing load stroke...'); // Додано для перевірки
-
   // Видаляємо надпис та індикатор завантаження
   const textElement = daddyElement.querySelector('.loading-text');
   const loaderElement = daddyElement.querySelector('.loader');
@@ -49,7 +45,12 @@ export function removeLoadStroke(daddyElement) {
   if (textElement) textElement.remove();
   if (loaderElement) loaderElement.remove();
 
-  addMoreButton.classList.remove('hide'); // Показуємо кнопку "Load more"
+  if (addMoreButton) {
+    addMoreButton.classList.remove('hide'); // Показуємо кнопку "Load more"
+    console.log('Load more button shown'); // Додано для перевірки
+  } else {
+    console.error('Load more button not found'); // Додано для перевірки
+  }
 }
 
 export function markup(data) {
@@ -58,12 +59,9 @@ export function markup(data) {
     return;
   }
 
-  console.log('Rendering images...'); // Додано для перевірки
-
   const { hits } = data;
 
   if (hits.length === 0) {
-    console.log('No hits found in data'); // Додано для перевірки
     iziToast.show({
       ...iziOption,
       message: 'Sorry, there are no images matching your search query. Please, try again!',
@@ -95,7 +93,6 @@ export function markup(data) {
     .join(' ');
 
   box.insertAdjacentHTML('beforeend', markup); // Додаємо зображення до галереї
-  console.log('Images rendered successfully'); // Додано для перевірки
   removeLoadStroke(load); // Приховуємо надпис після додавання зображень
 
   // Ініціалізація SimpleLightbox
