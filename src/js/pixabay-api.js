@@ -29,7 +29,12 @@ function endOfList(daddyElement, message = "We're sorry, but you've reached the 
   if (!daddyElement.querySelector('.loading-text')) {
     daddyElement.insertAdjacentHTML('beforeend', `<p class="loading-text">${message}</p>`);
   }
-  addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
+  if (addMoreButton) {
+    addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
+    console.log('Load more button hidden'); // Додано для перевірки
+  } else {
+    console.error('Load more button not found'); // Додано для перевірки
+  }
 }
 
 export async function getImage(input) {
