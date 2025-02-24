@@ -54,8 +54,7 @@ export async function getImage(input) {
     if (data.hits.length === 0) {
       console.log('No images found for the query:', input); // Додано для перевірки
       endOfList(load, "Sorry, there are no images matching your search query. Please try again!");
-      removeLoadStroke(load); // Приховуємо текст "Wait, the image is loaded"
-      return;
+      return; // Виходимо з функції
     }
 
     console.log('Images found:', data.hits.length); // Додано для перевірки
@@ -64,7 +63,7 @@ export async function getImage(input) {
     if (data.totalHits < page * perPage) {
       console.log('End of search results reached'); // Додано для перевірки
       endOfList(load);
-      return;
+      return; // Виходимо з функції
     }
 
     if (page >= 2) {
@@ -86,6 +85,6 @@ export async function getImage(input) {
       ...iziOption,
       message: `Sorry, an error happened. Try again. Error: ${error.message}`,
     });
-    return;
+    return; // Виходимо з функції
   }
 }
