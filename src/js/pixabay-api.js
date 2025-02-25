@@ -60,10 +60,29 @@ export async function getImage(input) {
 
     markup(data); // Викликаємо markup, який містить removeLoadStroke
 
-    if (data.totalHits < page * perPage) {
+if (data.totalHits < page * perPage) {
+  // Досягли кінця колекції – отримуємо останній елемент галереї
+  const gallery = document.querySelector('.gallery');
+  const lastImage = gallery ? gallery.lastElementChild : null;
+  if (lastImage) {
+    const rect = lastImage.getBoundingClientRect();
+    if (rect.bottom <= window.innerHeight) {
+      // Остання картинка вже видима – показуємо сповіщення відразу
       endOfList(load);
-      return;
+    } else {
+      // Остання картинка не видима – додаємо обробник прокрутки
+      const onScroll = () => {
+        const lastRect = lastImage.getBoundingClientRect();
+        if (lastRect.bottom <= window.innerHeight) {
+          endOfList(load);
+          window.removeEventListener('scroll', onScroll);
+        }
+      };
+      window.addEventListener('scroll', onScroll);
     }
+  }
+  return;
+}
 
 if (page >= 2) {
   setTimeout(() => {
