@@ -27,12 +27,12 @@ export function addPage() {
 
 function endOfList(daddyElement, message = "We're sorry, but you've reached the end of search results.") {
   removeLoadStroke(daddyElement);
-  if (!daddyElement.querySelector('.loading-text')) {
-    daddyElement.insertAdjacentHTML('beforeend', `<p class="loading-text">${message}</p>`);
-  }
+  iziToast.show({
+    ...iziOption,
+    message: message,
+  });
   if (addMoreButton) {
-    addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
-    
+    addMoreButton.classList.add('hide');
   }
 }
 
@@ -65,24 +65,33 @@ export async function getImage(input) {
       return;
     }
 
-    if (page >= 2) {
-      const list = document.querySelector('.gallery__item');
-      if (list) {
-        const rect = list.getBoundingClientRect();
-        window.scrollBy({
-          top: rect.height * 2,
-          behavior: 'smooth',
-        });
-      }
+if (page >= 2) {
+  setTimeout(() => {
+    const gallery = document.querySelector('.gallery');
+    if (gallery && gallery.firstElementChild) {
+      const card = gallery.firstElementChild;
+      const { height: cardHeight } = card.getBoundingClientRect();
+      // Отримуємо значення gap, якщо воно задане
+      const gap = parseInt(window.getComputedStyle(gallery).gap) || 0;
+      window.scrollBy({
+        top: cardHeight * 2 + gap,
+        behavior: 'smooth',
+      });
     }
+  }, 300); // затримка у 300 мс для оновлення розмітки
+}
+
+
   } catch (error) {
-    box.innerHTML = '';
-    load.innerHTML = '';
-    removeLoadStroke(load); // Приховуємо текст "Wait, the image is loaded" у разі помилки
-    iziToast.show({
-      ...iziOption,
-      message: `Sorry, an error happened. Try again. Error: ${error.message}`,
-    });
-    return;
-  }
+  box.innerHTML = '';
+  load.innerHTML = '';
+  removeLoadStroke(load); // Приховуємо індикатор завантаження
+  addMoreButton.classList.add('hide'); // Приховуємо кнопку "Load more"
+  iziToast.show({
+    ...iziOption,
+    message: `Sorry, an error happened. Try again. Error: ${error.message}`,
+  });
+  return;
+}
+
 }
